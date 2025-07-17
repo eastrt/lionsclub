@@ -31,8 +31,119 @@
 
   <title>Yeulgok Lionsclub</title>
   <link rel="manifest" href="manifest.json">
+  
+   <script>
+       // 세션 스토리지에서 Flutter 로딩 상태를 확인 (선택 사항)
+       var serviceWorkerVersion = null;
+     </script>
+     <!-- 이 스크립트는 Flutter 웹 앱을 로드하고 초기화합니다. -->
+     <script src="flutter.js" defer></script>
+   
+     <style>
+       /* 로딩 인디케이터 스타일 */
+       body {
+         margin: 0;
+         padding: 0;
+         display: flex;
+         flex-direction: column; /* 이미지와 텍스트를 수직으로 배치 */
+         justify-content: center;
+         align-items: center;
+         height: 100vh;
+         background-color: #FFFFFF; /* flutter_native_splash의 color와 일치 */
+         font-family: Arial, sans-serif; /* 기본 폰트 */
+       }
+   
+       .loading-container {
+         text-align: center;
+       }
+   
+       .loading-container img {
+         width: 100px; /* 원하는 이미지 크기로 조절 */
+         height: 100px; /* 원하는 이미지 크기로 조절 */
+         margin-bottom: 20px; /* 이미지와 텍스트 사이 간격 */
+       }
+   
+       .loading-indicator {
+         /* 간단한 텍스트 기반 로딩 인디케이터 */
+         font-size: 18px;
+         color: #333333;
+       }
+   
+       /* 더 정교한 CSS 로더를 사용할 수도 있습니다. 예: 스피너 */
+       .spinner {
+         border: 4px solid rgba(0, 0, 0, 0.1);
+         width: 36px;
+         height: 36px;
+         border-radius: 50%;
+         border-left-color: #0971CE; /* 스피너 색상 */
+         margin-top: 20px; /* 텍스트와 스피너 사이 간격 */
+   
+         animation: spin 1s ease infinite;
+       }
+   
+       @keyframes spin {
+         0% {
+           transform: rotate(0deg);
+         }
+         100% {
+           transform: rotate(360deg);
+         }
+       }
+     </style>
 </head>
 <body>
+ <!-- Flutter 앱이 로드되기 전에 보여줄 내용 -->
+  <div id="loading_indicator_container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #FFFFFF; text-align: center; font-family: Arial, sans-serif;">
+    <!-- 
+      스플래시 이미지 경로:
+      - `flutter_native_splash`를 사용하면, 이 패키지가 `flutter build web` 시점에 `assets/logos/lci_small.png`를
+        웹 빌드 출력 폴더 (`build/web/assets/assets/logos/lci_small.png`)로 복사합니다.
+      - 따라서 HTML에서는 `assets/assets/logos/lci_small.png` 경로를 사용해야 할 수 있습니다.
+      - 또는, `web` 폴더 바로 아래에 `lci_small.png` 이미지를 직접 복사해두고 `src="lci_small.png"` 처럼 사용할 수도 있습니다.
+      - 정확한 경로는 `flutter build web` 후 `build/web` 폴더의 구조를 확인하고 조정하세요.
+    -->
+    <img src="assets/assets/logos/lci_small.png" alt="Loading Logo" style="width: 120px; height: 120px; margin-bottom: 24px;">
+
+    <div style="font-size: 18px; color: #333333; margin-bottom: 20px;">
+      앱을 불러오는 중입니다...
+    </div>
+
+    <!-- 간단한 CSS 스피너 (선택 사항) -->
+    <div class="spinner" style="border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #0971CE; animation: spin 1s ease infinite;"></div>
+
+    <!-- 
+      선택 사항: 로딩 진행률 표시 (JavaScript로 업데이트 필요)
+      <div id="loading_progress" style="margin-top: 10px; font-size: 14px; color: #555555;">0%</div>
+      <div style="width: 200px; height: 10px; background-color: #e0e0e0; border-radius: 5px; margin-top: 5px; overflow: hidden;">
+        <div id="progress_bar_inner" style="width: 0%; height: 100%; background-color: #4CAF50;"></div>
+      </div>
+    -->
+  </div>
+
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Flutter 앱이 로드되면 이 스크립트가 실행됩니다.
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp().then(function(app) {
+              // Flutter 앱이 완전히 초기화되고 실행된 후 로딩 인디케이터를 숨깁니다.
+              // (선택 사항: 더 부드러운 전환을 위해 약간의 지연을 줄 수 있습니다.)
+              // setTimeout(function() {
+              //   var loadingIndicator = document.getElementById('loading_indicator_container');
+              //   if (loadingIndicator) {
+              //     loadingIndicator.style.display = 'none';
+              //   }
+              // }, 200); // 200ms 지연 예시
+            });
+          });
+        }
+      });
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
